@@ -684,6 +684,9 @@
       <frameId>gps_link</frameId>
       <topicName>/gps/fix</topicName>
       <velocityTopicName>/gps/fix_velocity</velocityTopicName>
+      <referenceLatitude>-30.06022459407145675</referenceLatitude>
+      <referenceLongitude>-51.173913575780311191</referenceLongitude>
+      <referenceHeading>0</referenceHeading>
       <offset>0 0 0</offset>
       <drift>0.001 0.001 0.001</drift>
       <gaussianNoise>0.0000001 0.0000001 0.0000001</gaussianNoise>

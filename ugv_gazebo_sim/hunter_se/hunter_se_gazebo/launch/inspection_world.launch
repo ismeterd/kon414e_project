@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
     <param name="inspection_geom" command="$(find xacro)/xacro --inorder '$(find cpr_inspection_gazebo)/urdf/inspection_geometry.urdf.xacro'" />
 
@@ -35,4 +36,21 @@
       <!-- push robot_description to factory and spawn robot in gazebo -->
       <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model hunter_se -z 0.05"
         respawn="false" />
+
+      <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
+
+        <param name="magnetic_declination_radians" value="0"/>
+
+        <param name="yaw_offset" value="0"/>
+
+        <param name="wait_for_datum" value="true"/>
+        <param name="publish_filtered_gps" value="true"/>
+
+        <remap from="/gps/fix" to="/gps/fix" />
+        <remap from="/odometry/filtered" to="/ackermann_steering_controller/odom" />
+        <rosparam param="datum">[-30.06022459407145675, -51.173913575780311191, 0.0, map, base_link]</rosparam>
+
+      </node>
+
+
 </launch>
