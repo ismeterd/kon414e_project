@@ -1,3 +1,6 @@
 [submodule "point_cloud_converter"]
 	path = point_cloud_converter
 	url = https://github.com/pal-robotics-forks/point_cloud_converter.git
+[submodule "pcd2octomap"]
+	path = pcd2octomap
+	url = git@github.com:HaowenLai/pcd2octomap.git
