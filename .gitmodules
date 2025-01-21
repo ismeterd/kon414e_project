@@ -1,0 +1,3 @@
+[submodule "point_cloud_converter"]
+	path = point_cloud_converter
+	url = https://github.com/pal-robotics-forks/point_cloud_converter.git
