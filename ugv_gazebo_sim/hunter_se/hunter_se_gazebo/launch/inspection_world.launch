@@ -92,6 +92,11 @@
                                false, false, false]</rosparam>
 </node>
 
+  <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
+    <remap from="points_in" to="/pointcloud"/>
+    <remap from="points2_out" to="/pointcloud_converted" />
+  </node>
+
 
 <group ns="rtabmap">
 
@@ -111,7 +116,7 @@
           <param name="subscribe_scan" type="bool" value="false"/>
 
           <remap from="odom" to="/odometry/filtered"/>
-          <remap from="scan_cloud" to="/pointcloud"/>
+          <remap from="scan_cloud" to="/pointcloud_converted"/>
 
           <param name="queue_size" type="int" value="50"/>
 
