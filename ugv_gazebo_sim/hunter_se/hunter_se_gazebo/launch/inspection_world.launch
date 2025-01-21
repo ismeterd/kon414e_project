@@ -18,124 +18,106 @@
     <arg name="world_name" default="$(find cpr_inspection_gazebo)/worlds/inspection_world.world" />
   
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-      <arg name="debug" value="0" />
-      <arg name="gui" value="$(arg gui)" />
-      <arg name="use_sim_time" value="$(arg use_sim_time)" />
-      <arg name="headless" value="$(arg headless)" />
-      <arg name="world_name" value="$(arg world_name)" />
+        <arg name="debug" value="0" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="use_sim_time" value="$(arg use_sim_time)" />
+        <arg name="headless" value="$(arg headless)" />
+        <arg name="world_name" value="$(arg world_name)" />
     </include>
 
     <node name="inspection_world_spawner" pkg="gazebo_ros" type="spawn_model"
-      args="-urdf -model inspection_geometry -param inspection_geom -x $(arg world_x) -y $(arg world_y) -z $(arg world_z) -Y $(arg world_yaw)" />
+        args="-urdf -model inspection_geometry -param inspection_geom -x $(arg world_x) -y $(arg world_y) -z $(arg world_z) -Y $(arg world_yaw)" />
 
-      <include file="$(find hunter_se_control)/launch/hunter_se_v_contol.launch" />
-      <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
-      <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
-      <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_description.urdf'" />
-      <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
-      <!-- push robot_description to factory and spawn robot in gazebo -->
-      <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model hunter_se -z 0.05"
+        <include file="$(find hunter_se_control)/launch/hunter_se_v_contol.launch" />
+        <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+        <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
+        <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_description.urdf'" />
+        <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
+        <!-- push robot_description to factory and spawn robot in gazebo -->
+        <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model hunter_se -z 0.05"
         respawn="false" />
 
-      <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
-
+    <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true">
         <param name="magnetic_declination_radians" value="0"/>
-
         <param name="yaw_offset" value="1.5707963"/>
-
-        <param name="wait_for_datum" value="true"/> 
-
+        <param name="wait_for_datum" value="true"/>
         <remap from="/imu/data" to="/imu" />
         <remap from="/gps/fix" to="/gps/fix" />
         <remap from="/odometry/filtered" to="/odometry/filtered" />
         <rosparam param="datum">[-30.06022459407145675, -51.173913575780311191]</rosparam>
+     </node>
 
-      </node>
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true">
+        <param name="frequency" value="20"/>
+        <param name="sensor_timeout" value="0.2"/>
+        <param name="two_d_mode" value="false"/>
 
+        <param name="map_frame" value="map"/>
+        <param name="odom_frame" value="odom"/>
+        <param name="base_link_frame" value="base_footprint"/>
+        <param name="world_frame" value="odom"/>
 
+        <param name="odom0" value="/ackermann_steering_controller/odom"/>
+        <param name="odom1" value="/odometry/gps"/>
+        <param name="imu0" value="/imu"/>
 
-      <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true">
-      <param name="frequency" value="20"/>  
-      <param name="sensor_timeout" value="0.2"/>  
-      <param name="two_d_mode" value="false"/>
+        <param name="publish_tf" value="true" />
 
-      <param name="map_frame" value="map"/>
-      <param name="odom_frame" value="odom"/>
-      <param name="base_link_frame" value="base_footprint"/>
-      <param name="world_frame" value="odom"/>
-
-      <param name="odom0" value="/ackermann_steering_controller/odom"/>
-      <param name="odom1" value="/odometry/gps"/>
-      <param name="imu0" value="/imu"/>
-
-      <param name="publish_tf" value="true" />
-
-        <rosparam param="odom0_config">[false, false, false,  
-                                 true, true, true, 
-                                 true, true, true, 
-                                 true, true, true, 
+        <rosparam param="odom0_config">[false, false, false,
+                                 true, true, true,
+                                 true, true, true,
+                                 true, true, true,
                                  false, false, false]</rosparam>
-      <param name="odom0_differential" value="true"/>                              
+        <param name="odom0_differential" value="true"/>
 
-
-      <rosparam param="odom1_config">[true,  true,  true,
+        <rosparam param="odom1_config">[true,  true,  true,
                                       false, false, false,
                                       false, false, false,
                                       false, false, false,
                                       false, false, false]</rosparam>
-      <param name="odom1_differential" value="false"/>
+        <param name="odom1_differential" value="false"/>
 
-      <rosparam param="imu0_config">[false, false, false,
+        <rosparam param="imu0_config">[false, false, false,
                                true, true, true,
                                false, false, false,
                                false, false, false,
                                false, false, false]</rosparam>
-</node>
-
-  <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
-    <remap from="points_in" to="/pointcloud"/>
-    <remap from="points2_out" to="/pointcloud_converted" />
-  </node>
-
-
-<group ns="rtabmap">
-
-<!--     Use RGBD synchronization -->
-<!--     Here is a general example using a standalone nodelet, -->
-<!--          but it is recommended to attach this nodelet to nodelet -->
-<!--          manager of the camera to avoid topic serialization -->
-
-
-    <node name="rtabmap" pkg="rtabmap_slam" type="rtabmap" output="screen" args="--delete_db_on_start">
-          <param name="frame_id" type="string" value="base_footprint"/>
-
-          <param name="subscribe_depth" type="bool" value="false"/>
-          <param name="subscribe_rgbd" type="bool" value="false"/>
-          <param name="subscribe_rgb" type="bool" value="false"/>
-          <param name="subscribe_scan_cloud" type="bool" value="true"/>
-          <param name="subscribe_scan" type="bool" value="false"/>
-          <param name="approx_sync" type="bool" value="true"/>
-
-          <remap from="odom" to="/odometry/filtered"/>
-          <remap from="scan_cloud" to="/pointcloud_converted"/>
-
-          <param name="queue_size" type="int" value="50"/>
-
-<!--           RTAB-Map's parameters -->
-          <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
-          <param name="RGBD/ProximityBySpace"     type="string" value="true"/>
-          <param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
-          <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
-          <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
-          <param name="Grid/FromDepth"            type="string" value="false"/>
-          <param name="Reg/Force3DoF"             type="string" value="false"/>
-          <param name="Reg/Strategy"              type="string" value="1"/>
-
-<!--           ICP parameters -->
-          <param name="Icp/VoxelSize"                 type="string" value="0.05"/>
-          <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/>
     </node>
-  </group>
 
+    <node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
+        <remap from="points_in" to="/pointcloud"/>
+        <remap from="points2_out" to="/pointcloud_converted" />
+    </node>
 
+    <group ns="rtabmap">
+        <node name="rtabmap" pkg="rtabmap_slam" type="rtabmap" output="screen" args="--delete_db_on_start">
+              <param name="frame_id" type="string" value="base_footprint"/>
+
+              <param name="subscribe_depth" type="bool" value="false"/>
+              <param name="subscribe_rgbd" type="bool" value="false"/>
+              <param name="subscribe_rgb" type="bool" value="false"/>
+              <param name="subscribe_scan_cloud" type="bool" value="true"/>
+              <param name="subscribe_scan" type="bool" value="false"/>
+              <param name="approx_sync" type="bool" value="true"/>
+
+              <remap from="odom" to="/odometry/filtered"/>
+              <remap from="scan_cloud" to="/pointcloud_converted"/>
+
+              <param name="queue_size" type="int" value="50"/>
+
+        <!--           RTAB-Map's parameters -->
+              <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
+              <param name="RGBD/ProximityBySpace"     type="string" value="true"/>
+              <param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
+              <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
+              <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
+              <param name="Grid/FromDepth"            type="string" value="false"/>
+              <param name="Reg/Force3DoF"             type="string" value="false"/>
+              <param name="Reg/Strategy"              type="string" value="1"/>
+
+        <!--           ICP parameters -->
+              <param name="Icp/VoxelSize"                 type="string" value="0.25"/>
+              <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/>
+        </node>
+    </group>
 </launch>
