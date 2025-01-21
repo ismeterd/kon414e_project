@@ -120,8 +120,12 @@
             <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/>
 
             <!--           OctoMap parameters -->
-            <param name="Grid/CellSize"                 type="string" value="0.05"/>
-            <param name="Grid/MinClusterSize"           type="string" value="0"/>
+            <param name="Grid/CellSize"                 type="string" value="0.1"/>
+            <!--           Don't use 0, 1 and 2 as Grid/MinClusterSize for inspection map -->
+            <param name="Grid/MinClusterSize"           type="string" value="5"/>
+            <param name="Grid/RayTracing"               type="string" value="true"/>
+            <param name="Grid/MaxRange"                 type="string" value="20"/>
+<!--             <param name="Grid/Sensor"                   type="string" value="true"/> -->
         </node>
     </group>
 </launch>
