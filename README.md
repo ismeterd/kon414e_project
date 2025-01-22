@@ -50,6 +50,8 @@ environment representation</li>
 ![](images/inspection-world-1.png)  |  ![](images/inspection-world-2.png)
 ![](images/inspection-world-3.png)  |  ![](images/inspection-world-4.png)
 
+<br/>
+
 ## Some Stages of the Project
 |   |   |
 |---|---|
@@ -77,8 +79,12 @@ catkin_make
 ### Dependency
 <ul>
     <li><a href="https://github.com/clearpathrobotics/cpr_gazebo">
-<em>hector_gazebo_plugins</em></a> for Gazebo GPS plugin</li>
+<em>hector_gazebo_plugins</em></a> for Gazebo GPS plugin (has to be installed)</li>
     <li><a href="https://github.com/pal-robotics-forks/point_cloud_converter">
 <em>point_cloud_converter</em></a> to convert PointCloud to PointCloud2</li>
-    <li>Robot packages...</li>
+    <li>The ROS packages for the robots 
+were created by modifying the ROS packages of the relevant 
+robots (HUNTER SE, HUNTER 2.0) from the 
+<a href="https://github.com/agilexrobotics/ugv_gazebo_sim">
+<em>agilexrobotics/ugv_gazebo_sim</em></a> GitHub Repository</li>
 </ul>
