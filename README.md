@@ -87,4 +87,6 @@ were created by modifying the ROS packages of the relevant
 robots (HUNTER SE, HUNTER 2.0) from the 
 <a href="https://github.com/agilexrobotics/ugv_gazebo_sim">
 <em>agilexrobotics/ugv_gazebo_sim</em></a> GitHub Repository</li>
+<li><a href="https://github.com/introlab/rtabmap_ros">
+<em>rtabmap_ros</em></a> for RTAB Mapping and Octomap generation (has to be installed)</li>
 </ul>
